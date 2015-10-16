@@ -2,6 +2,11 @@
 
 Php library for interacting with [Drush](https://github.com/drush-ops/drush) Drupal cli tool
  
+## Warning
+
+You shall not use this library directly in a webpage, since running one of those
+methods will take minutes to finish. Instead, this class is made to be used
+by command line tools, like deployment tools.
 
 ## Installation **(with composer)** :
 
