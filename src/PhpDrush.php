@@ -41,7 +41,7 @@ namespace PhpDrush {
          * @throws \Exception
          */
         private function runDrush($arguments) {
-            cwd($this->siteLocation);
+            chdir($this->siteLocation);
             $cmd = $this->drushLocation;
             $cmd .= ' -y '.$arguments;
             $cmd .= ' 2>&1';
