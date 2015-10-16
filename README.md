@@ -11,8 +11,6 @@ composer require ec-europa/phpdrush
 
 ## Usage
 
-### Getting data
-
 ```php
 require 'vendor/autoload.php';
 
