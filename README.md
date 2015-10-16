@@ -39,4 +39,13 @@ $drush->featuresRevert(
     ['feature1','feature2','feature3']
 );
 
+// enable maintenance mode :
+
+$drush->setMaintenanceMode(true);
+
+// clear all caches :
+
+$drush->clearCache();
+
+
 ```

@@ -96,5 +96,29 @@ namespace PhpDrush {
             }
             return $this->runDrush($arg);
         }
+
+        /**
+         * Set the maintenance mode for the site
+         * @param $bool True to enable, False to disable
+         * @return array
+         * @throws \Exception
+         */
+        public function setMaintenanceMode($bool) {
+            $arg = 'vset maintenance_mode ';
+            $arg .= $bool ? '1' : '0';
+            return $this->runDrush($arg);
+        }
+
+        /**
+         * Run a clear cache
+         * @param string $type Type of cache to clean ( default : all )
+         * @return array
+         * @throws \Exception
+         */
+        public function clearCache($type='all') {
+            $arg = 'cc ';
+            $arg .= escapeshellarg($type);
+            return $this->runDrush($arg);
+        }
     }
 }
