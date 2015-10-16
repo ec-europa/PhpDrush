@@ -20,13 +20,13 @@ namespace PhpDrush {
         /**
          * @param $drushLocation
          * @param $siteLocation
-         * @throws \Exception
+         * @throws PhpDrushException
          */
         public function __construct($drushLocation,$siteLocation) {
             if(!is_file($drushLocation))
-                throw new \Exception('Drush tool not found');
+                throw new PhpDrushException('Drush tool not found');
             if(!is_file($siteLocation.DIRECTORY_SEPARATOR.'settings.php'))
-                throw new \Exception($siteLocation.' doesn\'t seem to be a valid drupal installation');
+                throw new PhpDrushException($siteLocation.' doesn\'t seem to be a valid drupal installation');
 
             $this->drushLocation = $drushLocation;
             $this->siteLocation = $siteLocation;
@@ -38,7 +38,7 @@ namespace PhpDrush {
          *
          * @param $arguments Argument to pass to drush as a string
          * @return array An array of all the lines returned by drush (including PHP warnings/errors)
-         * @throws \Exception
+         * @throws PhpDrushException
          */
         private function runDrush($arguments) {
             chdir($this->siteLocation);
@@ -49,7 +49,7 @@ namespace PhpDrush {
             $rc = 0;
             exec($cmd,$output,$rc);
             if ($rc > 0)
-                throw new \Exception('Drush execution failed : '.PHP_EOL.implode(PHP_EOL,$output),$rc);
+                throw new PhpDrushException('Drush execution failed : '.PHP_EOL.implode(PHP_EOL,$output),$rc);
 
             //TODO : Here we need to loop over $output to catch errors when drush doesn't return an approritate rc
             // self::validateOutput() ?
@@ -60,7 +60,7 @@ namespace PhpDrush {
         /**
          * Run a database upgrade
          * @return array
-         * @throws \Exception
+         * @throws PhpDrushException
          */
         public function updateDatabase() {
             return $this->runDrush('updb');
@@ -70,7 +70,7 @@ namespace PhpDrush {
         /**
          * Run a registry rebuild
          * @return array
-         * @throws \Exception
+         * @throws PhpDrushException
          */
         public function registryRebuild() {
             return $this->runDrush('rr');
@@ -80,7 +80,7 @@ namespace PhpDrush {
          * @param array $featureList List of features to revert
          * @param bool|false $force If true, pass the --force argument
          * @return array
-         * @throws \Exception
+         * @throws PhpDrushException
          */
         public function featuresRevert($featureList=array(),$force=false) {
             if ( count($featureList) == 0)  {
@@ -101,7 +101,7 @@ namespace PhpDrush {
          * Set the maintenance mode for the site
          * @param $bool True to enable, False to disable
          * @return array
-         * @throws \Exception
+         * @throws PhpDrushException
          */
         public function setMaintenanceMode($bool) {
             $arg = 'vset maintenance_mode ';
@@ -113,7 +113,7 @@ namespace PhpDrush {
          * Run a clear cache
          * @param string $type Type of cache to clean ( default : all )
          * @return array
-         * @throws \Exception
+         * @throws PhpDrushException
          */
         public function clearCache($type='all') {
             $arg = 'cc ';
