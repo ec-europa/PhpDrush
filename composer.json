@@ -1,0 +1,21 @@
+{
+  "name": "ec-europa/phpdrush",
+  "description": "Php library for interacting with Drush Drupal cli tool",
+  "type": "library",
+  "keywords": ["drush","drupal","helper","php"],
+  "license": "EUPL",
+  "homepage": "https://github.com/ec-europa/phpdrush",
+  "authors": [
+    {
+      "name": "Gregory Boddin",
+      "email": "gregory.boddin@ext.ec.europa.eu",
+      "homepage": "https://github.com/gboddin"
+    }
+  ],
+  "autoload": {
+    "psr-4": {"PhpDrush\\": "src/"}
+  },
+  "require": {
+    "php" : ">=5.3.0"
+  }
+}
