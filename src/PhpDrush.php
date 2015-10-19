@@ -51,8 +51,9 @@ namespace PhpDrush {
             if ($rc > 0)
                 throw new PhpDrushException('Drush execution failed : '.PHP_EOL.implode(PHP_EOL,$output),$rc);
 
-            //TODO : Here we need to loop over $output to catch errors when drush doesn't return an approritate rc
-            // self::validateOutput() ?
+            // in case drush outputs [error] but rc = 0 anyway :
+
+            self::validateDrushOutput($output);
 
             return $output;
         }
@@ -119,6 +120,22 @@ namespace PhpDrush {
             $arg = 'cc ';
             $arg .= escapeshellarg($type);
             return $this->runDrush($arg);
+        }
+
+        /**
+         * Check drush output to handle drush [error]
+         * @param array $output
+         * @return bool
+         * @throws PhpDrushException
+         */
+        static function validateDrushOutput(array $output) {
+            foreach($output as $line) {
+                if (
+                    preg_match('/^\[error\]/i',$line) ||
+                    preg_match('/^\[fatal\]/i',$line)
+                ) throw new PhpDrushException('Drush execution failed : '.PHP_EOL.implode(PHP_EOL,$output),10);
+            }
+            return true;
         }
     }
 }
