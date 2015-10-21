@@ -123,6 +123,24 @@ namespace PhpDrush {
         }
 
         /**
+         * Enable one or multiple modules
+         * @param mixed $modules Either a string (single module) or an array
+         * @return array
+         * @throws PhpDrushException
+         */
+        public function enableModules($modules) {
+            $arg = 'pm-enable ';
+            if(is_array($modules)) {
+                foreach($modules as $module) {
+                    $arg .= escapeshellarg($module).' ';
+                }
+            } else {
+                $arg = escapeshellarg($modules);
+            }
+            return $this->runDrush($arg);
+        }
+
+        /**
          * Check drush output to handle drush [error]
          * @param array $output
          * @return bool
