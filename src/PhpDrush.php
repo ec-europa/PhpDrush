@@ -18,6 +18,12 @@ namespace PhpDrush {
         private $siteLocation;
 
         /**
+         * @var Enable or disable coloring in drush output
+         * By default disabled
+         */
+        private $noColor = true;
+
+        /**
          * @param $drushLocation
          * @param $siteLocation
          * @throws PhpDrushException
@@ -43,6 +49,8 @@ namespace PhpDrush {
         private function runDrush($arguments) {
             chdir($this->siteLocation);
             $cmd = $this->drushLocation;
+            if($this->noColor)
+                $cmd .= ' --nocolor ';
             $cmd .= ' -y '.$arguments;
             $cmd .= ' 2>&1';
             $output = array();
@@ -154,6 +162,10 @@ namespace PhpDrush {
                 ) throw new PhpDrushException('Drush execution failed : '.PHP_EOL.implode(PHP_EOL,$output),10);
             }
             return true;
+        }
+
+        public function setColoring($color) {
+            $this->noColor = !$color;
         }
     }
 }
