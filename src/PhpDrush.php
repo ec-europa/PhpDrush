@@ -149,6 +149,16 @@ namespace PhpDrush {
         }
 
         /**
+         * Eval PHP code in current drush session
+         * @param $toEval
+         * @return array
+         * @throws PhpDrushException
+         */
+        public function ev($toEval) {
+            return $this->runDrush(' ev '.escapeshellarg($toEval));
+        }
+
+        /**
          * Check drush output to handle drush [error]
          * @param array $output
          * @return bool
