@@ -77,12 +77,20 @@ namespace PhpDrush {
 
 
         /**
-         * Run a registry rebuild
+         * Runs a registry rebuild
+         * @param bool|false $noCacheClear Avoid clearing the cache after rr
+         * @param bool|false $fireBazooka Fire a professional bazooka ... Yes ... A bazooka mtf!
          * @return array
          * @throws PhpDrushException
          */
-        public function registryRebuild() {
-            return $this->runDrush('rr');
+        public function registryRebuild($noCacheClear=false,$fireBazooka=false) {
+            $arg = '';
+            if($noCacheClear)
+                $arg .= ' --no-clear-cache ';
+            if($fireBazooka)
+                $arg .= ' --fire-bazooka ';
+
+            return $this->runDrush($arg.'rr');
         }
 
         /**
@@ -103,6 +111,7 @@ namespace PhpDrush {
             if ( $force ) {
                 $arg .= ' --force ';
             }
+
             return $this->runDrush($arg);
         }
 
