@@ -168,6 +168,26 @@ namespace PhpDrush {
         }
 
         /**
+         * Get logged in URL
+         * @param null $user User to log into
+         * @param null $path Path to log into
+         * @return string URL
+         * @throws PhpDrushException
+         */
+        public function userLogin($user=null,$path=null) {
+            $args = ' uli ';
+
+            if(!is_null($user))
+                $args .= escapeshellarg($user).' ';
+            if(!is_null($path))
+                $args .= escapeshellarg($path).' ';
+
+            list($link) = $this->runDrush($args);
+
+            return $link;
+        }
+
+        /**
          * Check drush output to handle drush [error]
          * @param array $output
          * @return bool
