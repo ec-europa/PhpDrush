@@ -68,6 +68,7 @@ namespace PhpDrush {
 
         /**
          * Run a database upgrade
+         *
          * @return array
          * @throws PhpDrushException
          */
@@ -78,6 +79,7 @@ namespace PhpDrush {
 
         /**
          * Runs a registry rebuild
+         *
          * @param bool|false $noCacheClear Avoid clearing the cache after rr
          * @param bool|false $fireBazooka Fire a professional bazooka ... Yes ... A bazooka mtf!
          * @return array
@@ -117,18 +119,33 @@ namespace PhpDrush {
 
         /**
          * Set the maintenance mode for the site
+         *
          * @param $bool True to enable, False to disable
          * @return array
          * @throws PhpDrushException
          */
         public function setMaintenanceMode($bool) {
-            $arg = 'vset maintenance_mode ';
-            $arg .= $bool ? '1' : '0';
-            return $this->runDrush($arg);
+            $value = $bool ? '1' : '0';
+            return $this->setVariable('maintenance_mode',$value);
+        }
+
+        /**
+         * Set a variable name
+         *
+         * @param $key
+         * @param $value
+         * @return array
+         * @throws PhpDrushException
+         */
+        public function setVariable($key,$value) {
+            return $this->runDrush(
+                sprintf('vset %s %s',escapeshellarg($key),escapeshellarg($value))
+            );
         }
 
         /**
          * Run a clear cache
+         *
          * @param string $type Type of cache to clean ( default : all )
          * @return array
          * @throws PhpDrushException
@@ -141,6 +158,7 @@ namespace PhpDrush {
 
         /**
          * Enable one or multiple modules
+         *
          * @param mixed $modules Either a string (single module) or an array
          * @return array
          * @throws PhpDrushException
@@ -159,6 +177,7 @@ namespace PhpDrush {
 
         /**
          * Eval PHP code in current drush session
+         *
          * @param $toEval
          * @return array
          * @throws PhpDrushException
@@ -169,6 +188,7 @@ namespace PhpDrush {
 
         /**
          * Get logged in URL
+         *
          * @param null $user User to log into
          * @param null $path Path to log into
          * @return string URL
@@ -189,6 +209,7 @@ namespace PhpDrush {
 
         /**
          * Check drush output to handle drush [error]
+         *
          * @param array $output
          * @return bool
          * @throws PhpDrushException
@@ -203,6 +224,11 @@ namespace PhpDrush {
             return true;
         }
 
+        /**
+         *
+         * Enable/disable coloring drush output
+         * @param $color
+         */
         public function setColoring($color) {
             $this->noColor = !$color;
         }
