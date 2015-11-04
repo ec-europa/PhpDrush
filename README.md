@@ -47,5 +47,8 @@ $drush->setMaintenanceMode(true);
 
 $drush->clearCache();
 
+// evaluate php code in the drush context
+$drush->ev('echo "Hello world!"');
+
 
 ```
