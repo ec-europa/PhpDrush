@@ -208,6 +208,20 @@ namespace PhpDrush {
         }
 
         /**
+         * Update password for user by auth name
+         * @param $authname
+         * @param $password
+         * @return array
+         * @throws PhpDrushException
+         */
+        public function updatePassword($authname,$password) {
+            $args = ' upwd ';
+            $args .= escapeshellarg($authname);
+            $args .= ' --password='.escapeshellarg($password);
+            return $this->runDrush($args);
+        }
+
+        /**
          * Check drush output to handle drush [error]
          *
          * @param array $output
