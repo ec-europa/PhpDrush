@@ -8,6 +8,11 @@ namespace PhpDrush {
     class PhpDrush {
 
         /**
+         * @var Drush transport layer (Local/SSH)
+         */
+        private $transport;
+
+        /**
          * @var Drush location
          */
         private $drushLocation;
@@ -33,9 +38,10 @@ namespace PhpDrush {
                 throw new PhpDrushException('Drush tool not found');
             if(!is_file($siteLocation.DIRECTORY_SEPARATOR.'settings.php'))
                 throw new PhpDrushException($siteLocation.' doesn\'t seem to be a valid drupal installation');
-
             $this->drushLocation = $drushLocation;
             $this->siteLocation = $siteLocation;
+            //default transport :
+            $this->setTransport(new Transport\Local());
         }
 
 
@@ -47,7 +53,6 @@ namespace PhpDrush {
          * @throws PhpDrushException
          */
         private function runDrush($arguments) {
-            chdir($this->siteLocation);
             $cmd = $this->drushLocation;
             if($this->noColor)
                 $cmd .= ' --nocolor ';
@@ -55,11 +60,8 @@ namespace PhpDrush {
             $cmd .= ' 2>&1';
             $output = array();
             $rc = 0;
-            exec($cmd,$output,$rc);
-            if ($rc > 0)
-                throw new PhpDrushException('Drush execution failed : '.PHP_EOL.implode(PHP_EOL,$output),$rc);
 
-            // in case drush outputs [error] but rc = 0 anyway :
+            $output = $this->transport->run($this->siteLocation, $cmd);
 
             self::validateDrushOutput($output);
 
@@ -245,6 +247,10 @@ namespace PhpDrush {
          */
         public function setColoring($color) {
             $this->noColor = !$color;
+        }
+
+        public function setTransport(PhpDrushTransportInterface $transport) {
+            $this->transport = $transport;
         }
     }
 }
