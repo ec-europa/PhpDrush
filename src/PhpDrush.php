@@ -36,7 +36,7 @@ namespace PhpDrush {
         public function __construct($drushLocation,$siteLocation,$alias=null) {
             if(!is_file($drushLocation))
                 throw new PhpDrushException('Drush tool not found');
-            if(!is_file($siteLocation.DIRECTORY_SEPARATOR.'settings.php') && !is_null($alias))
+            if(!is_file($siteLocation.DIRECTORY_SEPARATOR.'settings.php') && is_null($alias))
                 throw new PhpDrushException($siteLocation.' doesn\'t seem to be a valid drupal installation');
             $this->drushLocation = $drushLocation;
             $this->siteLocation = $siteLocation;
