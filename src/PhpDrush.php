@@ -24,18 +24,23 @@ namespace PhpDrush {
         private $noColor = true;
 
         /**
+         * @var string Alias to run commands on ( for targeting multiple sites )
+         */
+        private $alias = null;
+
+        /**
          * @param $drushLocation
          * @param $siteLocation
          * @throws PhpDrushException
          */
-        public function __construct($drushLocation,$siteLocation) {
+        public function __construct($drushLocation,$siteLocation,$alias=null) {
             if(!is_file($drushLocation))
                 throw new PhpDrushException('Drush tool not found');
-            if(!is_file($siteLocation.DIRECTORY_SEPARATOR.'settings.php'))
+            if(!is_file($siteLocation.DIRECTORY_SEPARATOR.'settings.php') && !is_null($alias))
                 throw new PhpDrushException($siteLocation.' doesn\'t seem to be a valid drupal installation');
-
             $this->drushLocation = $drushLocation;
             $this->siteLocation = $siteLocation;
+            $this->alias = $alias;
         }
 
 
@@ -49,6 +54,8 @@ namespace PhpDrush {
         private function runDrush($arguments) {
             chdir($this->siteLocation);
             $cmd = $this->drushLocation;
+            if(!is_null($this->alias))
+                $cmd .= ' @'.$this->alias;
             if($this->noColor)
                 $cmd .= ' --nocolor ';
             $cmd .= ' -y '.$arguments;
