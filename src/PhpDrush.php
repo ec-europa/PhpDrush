@@ -74,12 +74,37 @@ namespace PhpDrush {
         }
 
         /**
+         * @return bool
+         * @throws PhpDrushException
+         */
+        public function getUpDbStatus() {
+            $output = $this->runDrush('updatedb-status');
+            /**
+             * Very elegant
+             */
+            foreach($output as $line) {
+                if(preg_match('/no databse upgrades required/i',$line))
+                    return true;
+            }
+            // gfy
+            return false;
+        }
+
+        /**
          * Run a database upgrade
          *
+         * @param bool|true $doubleCheck Double check that updb did its job since rc code are for idiots (or sysadmins)
          * @return array
          * @throws PhpDrushException
          */
-        public function updateDatabase() {
+        public function updateDatabase($doubleCheck=true) {
+            if($doubleCheck) {
+                $outputUpDb = $this->runDrush('updb');
+                if(!$this->getUpDbStatus())
+                    throw new PhpDrushException('Updb failed, updb-status double check didn\'t pass'.
+                        PHP_EOL.implode(PHP_EOL,$outputUpDb));
+                return $outputUpDb;
+            }
             return $this->runDrush('updb');
         }
 
