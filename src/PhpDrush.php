@@ -83,7 +83,7 @@ namespace PhpDrush {
              * Very elegant
              */
             foreach($output as $line) {
-                if(preg_match('/no database upgrades required/i',$line))
+                if(preg_match('/no database updates required/i',$line))
                     return true;
             }
             // gfy
