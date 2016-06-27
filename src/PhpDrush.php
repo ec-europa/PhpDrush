@@ -39,8 +39,12 @@ namespace PhpDrush {
             if(!is_file($drushLocation)) {
                 throw new PhpDrushException('Drush tool not found'); 
             }
-            if(!is_file($siteLocation.DIRECTORY_SEPARATOR.'settings.php') && is_null($alias)) {
+            if(is_null($alias) && !is_file($siteLocation.DIRECTORY_SEPARATOR.'settings.php')) {
+                // Not an alias and settings.php not found :
                 throw new PhpDrushException($siteLocation.' doesn\'t seem to be a valid drupal installation'); 
+            } elseif(!is_null($alias) && !is_file($siteLocation.DIRECTORY_SEPARATOR.'index.php')) {
+                // Alias but no index.php found:
+                throw new PhpDrushException($siteLocation.' doesn\'t seem to be a valid drupal master');
             }
             $this->drushLocation = $drushLocation;
             $this->siteLocation = $siteLocation;
