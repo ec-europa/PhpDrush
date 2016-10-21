@@ -16,6 +16,7 @@
     "psr-4": {"PhpDrush\\": "src/"}
   },
   "require": {
-    "php" : ">=5.3.0"
+    "php" : ">=5.3.0",
+    "jagandecapri/symfony-parallel-process" : "~2.0"
   }
 }

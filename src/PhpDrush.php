@@ -1,6 +1,9 @@
 <?php
+
 namespace PhpDrush {
 
+    use Symfony\Component\Process\Process;
+    use Jack\Symfony\ProcessManager;
     /**
      * Class PhpDrush
      * @package PhpDrush
@@ -29,17 +32,24 @@ namespace PhpDrush {
          */
         private $alias = null;
 
+
+        private $parallel = false;
+        private $process  = array();
+        private $uri = null;
+
         /**
+         * PhpDrush constructor.
          * @param $drushLocation
          * @param $siteLocation
-         * @throws PhpDrushException
+         * @param null $alias
+         * @param $this
          */
-        public function __construct($drushLocation,$siteLocation,$alias=null) 
+        public function __construct($drushLocation,$siteLocation,$alias=null,$uri=null)
         {
             if(!is_file($drushLocation)) {
                 throw new PhpDrushException('Drush tool not found'); 
             }
-            if(is_null($alias) && !is_file($siteLocation.DIRECTORY_SEPARATOR.'settings.php')) {
+            if(is_null($alias) && is_null($uri) && !is_file($siteLocation.DIRECTORY_SEPARATOR.'settings.php')) {
                 // Not an alias and settings.php not found :
                 throw new PhpDrushException($siteLocation.' doesn\'t seem to be a valid drupal installation'); 
             } elseif(!is_null($alias) && !is_file($siteLocation.DIRECTORY_SEPARATOR.'index.php')) {
@@ -49,6 +59,7 @@ namespace PhpDrush {
             $this->drushLocation = $drushLocation;
             $this->siteLocation = $siteLocation;
             $this->alias = $alias;
+            $this->uri = $uri;
         }
 
 
@@ -66,24 +77,57 @@ namespace PhpDrush {
             if(!is_null($this->alias)) {
                 $cmd .= ' @'.$this->alias; 
             }
+            if(!is_null($this->uri)) {
+                $cmd .= ' --uri='.$this->uri;
+            }
             if($this->noColor) {
                 $cmd .= ' --nocolor '; 
             }
             $cmd .= ' -y '.$arguments;
             $cmd .= ' 2>&1';
-            $output = array();
-            $rc = 0;
-            exec($cmd, $output, $rc);
-            if ($rc > 0) {
-                throw new PhpDrushException('Drush execution failed : '.PHP_EOL.implode(PHP_EOL, $output), $rc); 
+
+            if ($this->parallel){
+                $process = new Process($cmd);
+                $pObjectId = spl_object_hash ($process);
+                $this->process[$pObjectId] = &$process;
+                return $pObjectId;
+            }else{
+                $output = array();
+                $rc = 0;
+                exec($cmd, $output, $rc);
+                if ($rc > 0) {
+                    throw new PhpDrushException('Drush execution failed : '.PHP_EOL.implode(PHP_EOL, $output), $rc);
+                }
+
+                // in case drush outputs [error] but rc = 0 anyway :
+
+                self::validateDrushOutput($output);
+
+                return $output;
             }
-
-            // in case drush outputs [error] but rc = 0 anyway :
-
-            self::validateDrushOutput($output);
-
-            return $output;
         }
+
+        /**
+         * @param array $output
+         * @param array $rc
+         * @param int $maxProcess
+         * @param int $pollingInterval
+         */
+        public function runDrushParall(&$output = array(), &$rc = array(), $maxProcess = 2, $pollingInterval  = 1000){
+            $result = array();
+            if (!empty ($this->process)){
+                print 'totot'.PHP_EOL;
+                $proc_mgr = new ProcessManager();
+                $proc_mgr->runParallel($this->process, $maxProcess, $pollingInterval);
+                foreach ($this->process as $id => $process) {
+                    if (!empty($process->getErrorOutput())){ $result[$id]['error'] = $process->getExitCode();}
+                    $rc[$id] = $process->getExitCode();
+                    $output[$id] = $process->getOutput();
+                }
+            }
+        }
+
+
 
         /**
          * @return bool
@@ -350,5 +394,20 @@ namespace PhpDrush {
         {
             $this->noColor = !$color;
         }
+
+        /**
+         * Enable/disable coloring drush output
+         * @param $color
+         */
+        public function setParallelMode($parallel)
+        {
+            $this->parallel = $parallel;
+        }
+
+        public function setUri($uri)
+        {
+            $this->uri = $uri;
+        }
+
     }
 }
