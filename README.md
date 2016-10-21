@@ -52,3 +52,51 @@ $drush->ev('echo "Hello world!"');
 
 
 ```
+
+## Usage Parallel:
+
+Parallel mode allow to run, for a drupal master, several commands in parallel.
+URI attribute can be used to choose the target subsite.
+Alias @sites is not yet supported.
+
+```php
+
+require 'vendor/autoload.php';
+
+
+$drushParall = new \PhpDrush\PhpDrush( '/local/path/to/drush', '/local/path/to/site' , NULL , TRUE);
+
+// Enable Parallel
+$drushParall->setParallelMode(TRUE);
+
+// Select URI subsiteA
+$drushParall->setUri("subsiteA");
+// Set command for subsiteA
+$drushParall->userLogin();
+$drushParall->userLogin(NULL,'admin');
+
+// Select URI subsiteB
+$drushParall->setUri("subsiteB");
+// Set command for subsiteB
+$drushParall->userLogin();
+$drushParall->userLogin(NULL,'admin');
+
+// Select URI subsiteC
+$drushParall->setUri("subsiteC");
+// Set command for subsiteC
+$subsiteCULI_id = $drushParall->userLogin();
+$drushParall->userLogin(NULL,'admin');
+
+// Run drush commands
+$output = array();
+$rc = array();
+$maxProcess = 2;
+$pollingInterval  = 1000;
+
+$drushParall->runDrushParall($output,$rc,$maxProcess,$pollingInterval);
+
+// Print output for ULI on subsiteC
+if ($rc[$subsiteCULI_id] === 0){
+  print ($output[$subsiteCULI_id]);
+}
+```
