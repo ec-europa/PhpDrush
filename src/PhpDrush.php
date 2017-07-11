@@ -350,5 +350,61 @@ namespace PhpDrush {
         {
             $this->noColor = !$color;
         }
+
+        /**
+         * Add user
+         * @param $username
+         * @param $mail
+         * @param $password
+         * @return array
+         * @throws PhpDrushException
+         */
+        public function userAdd($username,$mail,$password = FALSE)
+        {
+            if (!$password){
+              $password  = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789') , 0 , 10 );
+            }
+            $args = ' user-create ';
+            $args .= escapeshellarg($username);
+            $args .= ' --password="'.escapeshellarg($mail) . '"';
+            $args .= ' --password="'.escapeshellarg($password) . '"';
+            return $this->runDrush($args);
+        }
+
+        /**
+         * Add role to user
+         * @param $username
+         * @param $mail
+         * @param $password
+         * @return array
+         * @throws PhpDrushException
+         */
+        public function userAddRole($username,$role)
+        {
+            $args = ' user-add-role ';
+            $args .= escapeshellarg($role);
+            $args .= " ";
+            $args .= escapeshellarg($username);
+            return $this->runDrush($args);
+        }
+
+        /**
+         * Get variable value
+         * @param $variable
+         * @return string
+         * @throws PhpDrushException
+         */
+        public function getVariable($variable)
+        {
+            $args = ' vget ';
+            $args .= escapeshellarg($variable);
+            $output = $this->runDrush($args);
+            $value = explode ( ": " , $output[0]);
+            if (isset ($value[1])){
+              return $value[1];
+            }else{
+              return null;
+            }
+        }
     }
 }
