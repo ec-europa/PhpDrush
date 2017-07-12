@@ -364,9 +364,12 @@ namespace PhpDrush {
             if (!$password){
               $password  = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789') , 0 , 10 );
             }
+            if (!$mail){
+              $mail = escapeshellarg($username) . "@localhost.localdomain";
+            }
             $args = ' user-create ';
             $args .= escapeshellarg($username);
-            $args .= ' --password="'.escapeshellarg($mail) . '"';
+            $args .= ' --mail="'.escapeshellarg($mail) . '"';
             $args .= ' --password="'.escapeshellarg($password) . '"';
             return $this->runDrush($args);
         }
@@ -396,12 +399,14 @@ namespace PhpDrush {
          */
         public function getVariable($variable)
         {
-            $args = ' vget ';
+            $args = ' vget --format=json ';
             $args .= escapeshellarg($variable);
             $output = $this->runDrush($args);
-            $value = explode ( ": " , $output[0]);
-            if (isset ($value[1])){
-              return $value[1];
+            $json_result = implode (  PHP_EOL , $output );
+            $result = json_decode ($json_result, true);
+
+            if (isset ($result[$variable])){
+              return $result[$variable];
             }else{
               return null;
             }
