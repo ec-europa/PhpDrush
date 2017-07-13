@@ -350,5 +350,66 @@ namespace PhpDrush {
         {
             $this->noColor = !$color;
         }
+
+        /**
+         * Add user
+         * @param $username
+         * @param $mail
+         * @param $password
+         * @return array
+         * @throws PhpDrushException
+         */
+        public function userAdd($username,$mail,$password = FALSE)
+        {
+            if (!$password){
+              $password  = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789') , 0 , 10 );
+            }
+            if (!$mail){
+              $mail = escapeshellarg($username) . "@localhost.localdomain";
+            }
+            $args = ' user-create ';
+            $args .= escapeshellarg($username);
+            $args .= ' --mail="'.escapeshellarg($mail) . '"';
+            $args .= ' --password="'.escapeshellarg($password) . '"';
+            return $this->runDrush($args);
+        }
+
+        /**
+         * Add role to user
+         * @param $username
+         * @param $mail
+         * @param $password
+         * @return array
+         * @throws PhpDrushException
+         */
+        public function userAddRole($username,$role)
+        {
+            $args = ' user-add-role ';
+            $args .= escapeshellarg($role);
+            $args .= " ";
+            $args .= escapeshellarg($username);
+            return $this->runDrush($args);
+        }
+
+        /**
+         * Get variable value
+         * @param $variable
+         * @return string
+         * @throws PhpDrushException
+         */
+        public function getVariable($variable)
+        {
+            $args = ' vget --format=json ';
+            $args .= escapeshellarg($variable);
+            $output = $this->runDrush($args);
+            $json_result = implode (  PHP_EOL , $output );
+            $result = json_decode ($json_result, true);
+
+            if (isset ($result[$variable])){
+              return $result[$variable];
+            }else{
+              return null;
+            }
+        }
     }
 }
