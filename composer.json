@@ -16,6 +16,7 @@
     "psr-4": {"PhpDrush\\": "src/"}
   },
   "require": {
-    "php" : ">=5.3.0"
+    "php" : ">=5.3.0",
+    "cheprasov/php-redis-client" : "~1.7.2"
   }
 }
