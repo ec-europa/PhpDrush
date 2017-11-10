@@ -1,0 +1,21 @@
+workspace:
+  base: /test
+  path: PhpDrush
+
+matrix:
+  FPFIS_PHP_VERSION:
+    - 56
+    - 71
+
+pipeline:
+  prepare:
+    image: fpfis/php${FPFIS_PHP_VERSION}-dev
+    commands:
+      - php --version
+      - composer install
+
+  test-phpcs:
+    image: fpfis/php${FPFIS_PHP_VERSION}-dev
+    group: test
+    commands:
+      - ./bin/phpcs -p --report=full --report=source --report=summary -s --colors
