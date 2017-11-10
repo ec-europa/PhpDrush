@@ -1,6 +1,17 @@
 <?xml version="1.0"?>
 <ruleset name="PHP_CodeSniffer">
-    <description>PhpDrush</description>
-    <file>src</file>
+  <description>PhpDrush</description>
+	
+  <rule ref="Generic.WhiteSpace.ScopeIndent">
+    <properties>
+      <property name="indent" value="2"/>
+      <property name="tabIndent" value="false"/>
+    </properties>
+  </rule>
+  
+  <rule ref="PSR2"/>
+  <file>src</file>
 
+  <exclude-pattern>vendor</exclude-pattern>
+	
 </ruleset>
