@@ -5,8 +5,8 @@ namespace PhpDrush {
      * Class PhpDrushException
      * @package PhpDrush
      */
-    class PhpDrushException extends \Exception
-    {
+  class PhpDrushException extends \Exception
+  {
 
-    }
+  }
 }
