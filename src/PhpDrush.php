@@ -1,5 +1,9 @@
 <?php
+
 namespace PhpDrush {
+
+require (dirname(__DIR__).'/vendor/autoload.php');
+use RedisClient\RedisClient;
 
     /**
      * Class PhpDrush
@@ -410,6 +414,51 @@ namespace PhpDrush {
             }else{
               return null;
             }
+        }
+
+        /**
+         * Get redis-cli
+         */
+        private function getRedisClient()
+        {
+          try {
+            $redis_client_host = $this->getVariable("redis_client_host");
+            $redis_client_port = $this->getVariable("redis_client_port");
+            $redis_client_password = $this->getVariable("redis_client_password");
+            $redis_client_base = $this->getVariable("redis_client_base");
+
+            $config = [
+              'server' =>"${redis_client_host}:${redis_client_port}",
+              'timeout' => 2,
+              'password' => $redis_client_password,
+              'database' => $redis_client_base,
+            ];
+
+            return new RedisClient($config);
+
+          } catch (\PhpDrush\PhpDrushException $e) {
+            return NULL;
+          }
+        }
+
+        /**
+         * Flush Redis DB
+         *
+         * Remove all keys from the current database
+         *
+         * @throws ErrorResponseException
+         */
+        public function redisFlushDB()
+        {
+          if($Redis = $this->getRedisClient()){
+            if ($Redis->flushdb() === 1){
+              return 0;
+            }else{
+              return 1;
+            }
+          }else{
+            return 2;
+          }
         }
     }
 }
