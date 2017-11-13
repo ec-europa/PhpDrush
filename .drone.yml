@@ -1,11 +1,21 @@
 workspace:
   base: /test
-  path: PhpDrush
+  path: phpdrush
 
 matrix:
   FPFIS_PHP_VERSION:
     - 56
     - 71
+
+services:
+  web:
+    image: fpfis/php${FPFIS_PHP_VERSION}-dev
+    environment:
+     - DOCUMENT_ROOT=/test
+  mysql:
+    image: fpfis/mysql56
+  solr:
+    image: fpfis/solr5
 
 pipeline:
   prepare:
@@ -13,6 +23,17 @@ pipeline:
     commands:
       - php --version
       - composer install
+
+  prepare-mysql:
+    image: fpfis/mysql56
+    commands:
+      - mysqladmin -h mysql -uroot create drupal
+
+  build-dev:
+    image: fpfis/php${FPFIS_PHP_VERSION}-dev
+    commands:
+      - drush dl drupal-7 --destination=drupal --yes
+      - drush -r drupal site-install standard  --account-name=admin --account-pass=admin --db-url=mysql://root@mysql/drupal
 
   test-phpcs:
     image: fpfis/php${FPFIS_PHP_VERSION}-dev
