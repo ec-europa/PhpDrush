@@ -2,42 +2,41 @@
 
 namespace PhpDrush {
 
-  require(dirname(__DIR__).'/vendor/autoload.php');
   use RedisClient\RedisClient;
 
-    /**
-     * Class PhpDrush
-     * @package PhpDrush
-     */
+  /**
+   * Class PhpDrush
+   * @package PhpDrush
+   */
   class PhpDrush
   {
 
-      /**
-         * @var Drush location
-         */
+    /**
+     * @var Drush location
+     */
     private $drushLocation;
 
-      /**
-         * @var Site location
-         */
+    /**
+     * @var Site location
+     */
     private $siteLocation;
 
-      /**
-         * @var Enable or disable coloring in drush output
-         * By default disabled
-         */
+    /**
+     * @var Enable or disable coloring in drush output
+     * By default disabled
+     */
     private $noColor = true;
 
-      /**
-         * @var string Alias to run commands on ( for targeting multiple sites )
-         */
+    /**
+     * @var string Alias to run commands on ( for targeting multiple sites )
+     */
     private $alias = null;
 
-      /**
-         * @param $drushLocation
-         * @param $siteLocation
-         * @throws PhpDrushException
-         */
+    /**
+     * @param $drushLocation
+     * @param $siteLocation
+     * @throws PhpDrushException
+     */
     public function __construct($drushLocation, $siteLocation, $alias = null)
     {
       if (!is_file($drushLocation)) {
@@ -56,13 +55,13 @@ namespace PhpDrush {
     }
 
 
-      /**
-         * Run a drush command and throws an exception if failing
-         *
-         * @param  $arguments Argument to pass to drush as a string
-         * @return array An array of all the lines returned by drush (including PHP warnings/errors)
-         * @throws PhpDrushException
-         */
+    /**
+     * Run a drush command and throws an exception if failing
+     *
+     * @param  $arguments Argument to pass to drush as a string
+     * @return array An array of all the lines returned by drush (including PHP warnings/errors)
+     * @throws PhpDrushException
+     */
     private function runDrush($arguments)
     {
         chdir($this->siteLocation);
@@ -89,10 +88,10 @@ namespace PhpDrush {
         return $output;
     }
 
-      /**
-         * @return bool
-         * @throws PhpDrushException
-         */
+    /**
+     * @return bool
+     * @throws PhpDrushException
+     */
     public function getUpDbStatus()
     {
         $output = $this->runDrush('updatedb-status');
@@ -108,13 +107,13 @@ namespace PhpDrush {
           return false;
     }
 
-      /**
-         * Run a database upgrade
-         *
-         * @param  bool|true $doubleCheck Double check that updb did its job since rc code are for idiots (or sysadmins)
-         * @return array
-         * @throws PhpDrushException
-         */
+    /**
+     * Run a database upgrade
+     *
+     * @param  bool|true $doubleCheck Double check that updb did its job since rc code are for idiots (or sysadmins)
+     * @return array
+     * @throws PhpDrushException
+     */
     public function updateDatabase($doubleCheck = true)
     {
       if ($doubleCheck) {
@@ -131,14 +130,14 @@ namespace PhpDrush {
     }
 
 
-      /**
-         * Runs a registry rebuild
-         *
-         * @param  bool|false $noCacheClear Avoid clearing the cache after rr
-         * @param  bool|false $fireBazooka  Fire a professional bazooka ... Yes ... A bazooka mtf!
-         * @return array
-         * @throws PhpDrushException
-         */
+    /**
+     * Runs a registry rebuild
+     *
+     * @param  bool|false $noCacheClear Avoid clearing the cache after rr
+     * @param  bool|false $fireBazooka  Fire a professional bazooka ... Yes ... A bazooka mtf!
+     * @return array
+     * @throws PhpDrushException
+     */
     public function registryRebuild($noCacheClear = false, $fireBazooka = false)
     {
         $arg = '';
@@ -152,12 +151,12 @@ namespace PhpDrush {
         return $this->runDrush($arg.'rr');
     }
 
-      /**
-         * @param array      $featureList List of features to revert
-         * @param bool|false $force       If true, pass the --force argument
-         * @return array
-         * @throws PhpDrushException
-         */
+    /**
+     * @param array      $featureList List of features to revert
+     * @param bool|false $force       If true, pass the --force argument
+     * @return array
+     * @throws PhpDrushException
+     */
     public function featuresRevert($featureList = array(), $force = false)
     {
       if (count($featureList) == 0) {
@@ -175,27 +174,27 @@ namespace PhpDrush {
         return $this->runDrush($arg);
     }
 
-      /**
-         * Set the maintenance mode for the site
-         *
-         * @param  $bool True to enable, False to disable
-         * @return array
-         * @throws PhpDrushException
-         */
+    /**
+     * Set the maintenance mode for the site
+     *
+     * @param  $bool True to enable, False to disable
+     * @return array
+     * @throws PhpDrushException
+     */
     public function setMaintenanceMode($bool)
     {
         $value = $bool ? '1' : '0';
         return $this->setVariable('maintenance_mode', $value);
     }
 
-      /**
-         * Set a variable name
-         *
-         * @param  $key
-         * @param  $value
-         * @return array
-         * @throws PhpDrushException
-         */
+    /**
+     * Set a variable name
+     *
+     * @param  $key
+     * @param  $value
+     * @return array
+     * @throws PhpDrushException
+     */
     public function setVariable($key, $value)
     {
         return $this->runDrush(
@@ -203,13 +202,13 @@ namespace PhpDrush {
         );
     }
 
-      /**
-         * Run a clear cache
-         *
-         * @param  string $type Type of cache to clean ( default : all )
-         * @return array
-         * @throws PhpDrushException
-         */
+    /**
+     * Run a clear cache
+     *
+     * @param  string $type Type of cache to clean ( default : all )
+     * @return array
+     * @throws PhpDrushException
+     */
     public function clearCache($type = 'all')
     {
         $arg = 'cc ';
@@ -217,13 +216,13 @@ namespace PhpDrush {
         return $this->runDrush($arg);
     }
 
-      /**
-         * Enable one or multiple modules
-         *
-         * @param  mixed $modules Either a string (single module) or an array
-         * @return array
-         * @throws PhpDrushException
-         */
+    /**
+     * Enable one or multiple modules
+     *
+     * @param  mixed $modules Either a string (single module) or an array
+     * @return array
+     * @throws PhpDrushException
+     */
     public function enableModules($modules)
     {
         $arg = 'pm-enable ';
@@ -237,13 +236,13 @@ namespace PhpDrush {
         return $this->runDrush($arg);
     }
 
-      /**
-         * Disable one or multiple modules
-         *
-         * @param  mixed $modules Either a string (single module) or an array
-         * @return array
-         * @throws PhpDrushException
-         */
+    /**
+     * Disable one or multiple modules
+     *
+     * @param  mixed $modules Either a string (single module) or an array
+     * @return array
+     * @throws PhpDrushException
+     */
     public function disableModules($modules)
     {
         $arg = 'pm-disable ';
@@ -257,13 +256,13 @@ namespace PhpDrush {
         return $this->runDrush($arg);
     }
 
-      /**
-         * Uninstall one or multiple modules
-         *
-         * @param  mixed $modules Either a string (single module) or an array
-         * @return array
-         * @throws PhpDrushException
-         */
+    /**
+     * Uninstall one or multiple modules
+     *
+     * @param  mixed $modules Either a string (single module) or an array
+     * @return array
+     * @throws PhpDrushException
+     */
     public function uninstallModules($modules)
     {
         $arg = 'pm-uninstall ';
@@ -277,26 +276,26 @@ namespace PhpDrush {
         return $this->runDrush($arg);
     }
         
-      /**
-         * Eval PHP code in current drush session
-         *
-         * @param  $toEval
-         * @return array
-         * @throws PhpDrushException
-         */
+    /**
+     * Eval PHP code in current drush session
+     *
+     * @param  $toEval
+     * @return array
+     * @throws PhpDrushException
+     */
     public function ev($toEval)
     {
         return $this->runDrush(' ev '.escapeshellarg($toEval));
     }
 
-      /**
-         * Get logged in URL
-         *
-         * @param  null $user User to log into
-         * @param  null $path Path to log into
-         * @return string URL
-         * @throws PhpDrushException
-         */
+    /**
+     * Get logged in URL
+     *
+     * @param  null $user User to log into
+     * @param  null $path Path to log into
+     * @return string URL
+     * @throws PhpDrushException
+     */
     public function userLogin($user = null, $path = null)
     {
         $args = ' uli ';
@@ -313,13 +312,13 @@ namespace PhpDrush {
         return $link;
     }
 
-      /**
-         * Update password for user by auth name
-         * @param $authname
-         * @param $password
-         * @return array
-         * @throws PhpDrushException
-         */
+    /**
+     * Update password for user by auth name
+     * @param $authname
+     * @param $password
+     * @return array
+     * @throws PhpDrushException
+     */
     public function updatePassword($authname, $password)
     {
         $args = ' upwd ';
@@ -328,13 +327,13 @@ namespace PhpDrush {
         return $this->runDrush($args);
     }
 
-      /**
-         * Check drush output to handle drush [error]
-         *
-         * @param  array $output
-         * @return bool
-         * @throws PhpDrushException
-         */
+    /**
+     * Check drush output to handle drush [error]
+     *
+     * @param  array $output
+     * @return bool
+     * @throws PhpDrushException
+     */
     public static function validateDrushOutput(array $output)
     {
       foreach ($output as $line) {
@@ -347,23 +346,23 @@ namespace PhpDrush {
         return true;
     }
 
-      /**
-         * Enable/disable coloring drush output
-         * @param $color
-         */
+    /**
+     * Enable/disable coloring drush output
+     * @param $color
+     */
     public function setColoring($color)
     {
         $this->noColor = !$color;
     }
 
-      /**
-         * Add user
-         * @param $username
-         * @param $mail
-         * @param $password
-         * @return array
-         * @throws PhpDrushException
-         */
+    /**
+     * Add user
+     * @param $username
+     * @param $mail
+     * @param $password
+     * @return array
+     * @throws PhpDrushException
+     */
     public function userAdd($username, $mail, $password = false)
     {
       if (!$password) {
@@ -379,14 +378,14 @@ namespace PhpDrush {
         return $this->runDrush($args);
     }
 
-      /**
-         * Add role to user
-         * @param $username
-         * @param $mail
-         * @param $password
-         * @return array
-         * @throws PhpDrushException
-         */
+    /**
+     * Add role to user
+     * @param $username
+     * @param $mail
+     * @param $password
+     * @return array
+     * @throws PhpDrushException
+     */
     public function userAddRole($username, $role)
     {
         $args = ' user-add-role ';
@@ -396,19 +395,26 @@ namespace PhpDrush {
         return $this->runDrush($args);
     }
 
-      /**
-         * Get variable value
-         * @param $variable
-         * @return string
-         * @throws PhpDrushException
-         */
+    /**
+     * Get variable value
+     * @param $variable
+     * @return string
+     * @throws PhpDrushException
+     */
     public function getVariable($variable)
     {
-        $args = ' vget --format=json ';
-        $args .= escapeshellarg($variable);
-        $output = $this->runDrush($args);
-        $json_result = implode(PHP_EOL, $output);
-        $result = json_decode($json_result, true);
+      $args = ' vget --format=json ';
+      $args .= escapeshellarg($variable);
+      $output = $this->runDrush($args);
+      $json_result = implode(PHP_EOL, $output);
+
+      // Remove potential missing module warnings
+      $output_array = array();
+      if (preg_match("/The following.*bootstrap.inc:1143(.*)/s", $json_result, $output_array)) {
+        $json_result = $output_array[1];
+      }
+
+      $result = json_decode($json_result, true);
 
       if (isset($result[$variable])) {
         return $result[$variable];
@@ -417,9 +423,9 @@ namespace PhpDrush {
       }
     }
 
-      /**
-         * Get redis-cli
-         */
+    /**
+     * Get redis-cli
+     */
     private function getRedisClient()
     {
       try {
@@ -427,6 +433,10 @@ namespace PhpDrush {
         $redis_client_port = $this->getVariable("redis_client_port");
         $redis_client_password = $this->getVariable("redis_client_password");
         $redis_client_base = $this->getVariable("redis_client_base");
+
+        if (empty($redis_client_host) || preg_match('#^([0-9]{1,3}\.){3}[0-9]{1,3}$#', $redis_client_host) === 0) {
+          return null;
+        }
 
         $config = [
           'server' =>"${redis_client_host}:${redis_client_port}",
@@ -441,23 +451,19 @@ namespace PhpDrush {
       }
     }
 
-      /**
-         * Flush Redis DB
-         *
-         * Remove all keys from the current database
-         *
-         * @throws ErrorResponseException
-         */
+    /**
+     * Flush Redis DB
+     *
+     * Remove all keys from the current database
+     *
+     * @throws ErrorResponseException
+     */
     public function redisFlushDB()
     {
       if ($Redis = $this->getRedisClient()) {
-        if ($Redis->flushdb() === 1) {
-          return 0;
-        } else {
-          return 1;
-        }
+        return $Redis->flushdb();
       } else {
-        return 2;
+        return null;
       }
     }
   }
