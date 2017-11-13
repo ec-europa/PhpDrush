@@ -452,12 +452,12 @@ namespace PhpDrush {
     {
       if ($Redis = $this->getRedisClient()) {
         if ($Redis->flushdb() === 1) {
-          return 0;
+          return true;
         } else {
-          return 1;
+          return false;
         }
       } else {
-        return 2;
+        return null;
       }
     }
   }
