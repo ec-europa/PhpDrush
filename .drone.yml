@@ -32,11 +32,17 @@ pipeline:
   build-dev:
     image: fpfis/php${FPFIS_PHP_VERSION}-dev
     commands:
-      - drush dl drupal-7 --destination=drupal --yes
-      - drush -r drupal site-install standard  --account-name=admin --account-pass=admin --db-url=mysql://root@mysql/drupal
+      - ./bin/drush dl drupal-7 --drupal-project-rename=drupal --yes
+      - ./bin/drush -r drupal site-install standard --account-name=admin --account-pass=admin --db-url=mysql://root@mysql/drupal --yes
 
   test-phpcs:
     image: fpfis/php${FPFIS_PHP_VERSION}-dev
     group: test
     commands:
       - ./bin/phpcs -p --report=full --report=source --report=summary -s --colors
+
+  test-phpunit:
+    image: fpfis/php${FPFIS_PHP_VERSION}-dev
+    group: test
+    commands:
+      - ./bin/phpunit
