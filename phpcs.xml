@@ -9,9 +9,13 @@
     </properties>
   </rule>
   
+  
   <rule ref="PSR2"/>
-  <file>src</file>
-
+  
   <exclude-pattern>vendor</exclude-pattern>
+  <file>src</file>
+  <file>tests</file>
+
+  
 	
 </ruleset>
