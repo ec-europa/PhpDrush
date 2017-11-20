@@ -22,7 +22,7 @@
   "require-dev": {
     "squizlabs/php_codesniffer": "~3.0.1",
 	  "phpunit/phpunit": "5.3.*",
-    "drush/drush": "8.1.10"
+    "drush/drush": "~8"
   },
   "config": {
     "bin-dir": "bin/"
