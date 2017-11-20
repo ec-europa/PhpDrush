@@ -11,7 +11,7 @@ by command line tools, like deployment tools.
 ## Installation **(with composer)** :
 
 ```
-composer require ec-europa/phpdrush
+composer install
 ```
 
 ## Usage
@@ -52,3 +52,23 @@ $drush->ev('echo "Hello world!"');
 
 
 ```
+
+## Tests
+
+### Performing a PHP_CodeSniffer analysis
+
+Before committing, ensure your code is clean by running either composer phpcs or bin/phpcs
+```
+./bin/phpcs -p --report=full --report=source --report=summary -s --colors
+```
+
+### Performing PHPUnit tests
+
+Before committing, ensure there is no regression by running either composer phpunit or bin/phpunit
+
+A drupal instance is needed to perform PHPUnit tests. It can be quickly install using drush:
+```
+./bin/drush dl drupal-7 --drupal-project-rename=drupal --yes
+./bin/drush -r drupal site-install standard --account-name=admin --account-pass=admin --db-url=mysql://username:password@hostname/database --yes
+```
+

@@ -6,6 +6,11 @@ matrix:
   FPFIS_PHP_VERSION:
     - 56
     - 71
+  FPFIS_DRUSH_VERSION:
+  # production version
+    - 8.1.10
+  # last drush version
+    - ~8
 
 services:
   web:
@@ -23,6 +28,8 @@ pipeline:
     commands:
       - php --version
       - composer install
+      - "composer require 'drush/drush:${FPFIS_DRUSH_VERSION}' --dev"
+      - ./bin/drush --version
 
   prepare-mysql:
     image: fpfis/mysql56
