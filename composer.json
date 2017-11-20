@@ -20,7 +20,9 @@
     "cheprasov/php-redis-client" : "~1.7.2"
   },
   "require-dev": {
-    "squizlabs/php_codesniffer": "~3.0.1"
+    "squizlabs/php_codesniffer": "~3.0.1",
+    "phpunit/phpunit": "5.3.*",
+    "drush/drush": "8.1.10"
   },
   "config": {
     "bin-dir": "bin/"

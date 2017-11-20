@@ -363,7 +363,7 @@ namespace PhpDrush {
      * @return array
      * @throws PhpDrushException
      */
-    public function userAdd($username, $mail, $password = false)
+    public function userAdd($username, $mail = null, $password = false)
     {
       if (!$password) {
         $password  = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 10);
@@ -423,6 +423,17 @@ namespace PhpDrush {
       }
     }
 
+    /**
+     * Run SQLQuery
+     */
+    public function sqlQuery($query)
+    {
+      $args = ' sqlq ';
+      $args .= escapeshellarg($query);
+      $output = $this->runDrush($args);
+      return $output;
+    }
+    
     /**
      * Get redis-cli
      */

@@ -1,11 +1,26 @@
 workspace:
   base: /test
-  path: PhpDrush
+  path: phpdrush
 
 matrix:
   FPFIS_PHP_VERSION:
     - 56
     - 71
+  FPFIS_DRUSH_VERSION:
+  # production version
+    - 8.1.10
+  # last drush version
+    - ~8
+
+services:
+  web:
+    image: fpfis/php${FPFIS_PHP_VERSION}-dev
+    environment:
+     - DOCUMENT_ROOT=/test
+  mysql:
+    image: fpfis/mysql56
+  solr:
+    image: fpfis/solr5
 
 pipeline:
   prepare:
@@ -13,9 +28,28 @@ pipeline:
     commands:
       - php --version
       - composer install
+      - "composer require 'drush/drush:${FPFIS_DRUSH_VERSION}' --dev"
+      - ./bin/drush --version
+
+  prepare-mysql:
+    image: fpfis/mysql56
+    commands:
+      - mysqladmin -h mysql -uroot create drupal
+
+  build-dev:
+    image: fpfis/php${FPFIS_PHP_VERSION}-dev
+    commands:
+      - ./bin/drush dl drupal-7 --drupal-project-rename=drupal --yes
+      - ./bin/drush -r drupal site-install standard --account-name=admin --account-pass=admin --db-url=mysql://root@mysql/drupal --yes
 
   test-phpcs:
     image: fpfis/php${FPFIS_PHP_VERSION}-dev
     group: test
     commands:
       - ./bin/phpcs -p --report=full --report=source --report=summary -s --colors
+
+  test-phpunit:
+    image: fpfis/php${FPFIS_PHP_VERSION}-dev
+    group: test
+    commands:
+      - ./bin/phpunit
